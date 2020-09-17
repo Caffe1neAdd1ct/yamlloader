@@ -1,32 +1,29 @@
-# -*- coding: utf-8 -*-
 import os
 import glob
-
 from utils import yaml_stream
-
 from sqlalchemy import Table
+import sqlalchemy
 
-def load(connection, metadata, sourcePath):
-
+def importyaml(connection, metadata, source_path):
     print("Importing BSD Tables")
 
-    files=glob.glob(os.path.join(sourcePath,'bsd','*.yaml'))
+    files = glob.glob(os.path.join(source_path, 'bsd', '*.yaml'))
     for file in files:
 
         head, tail = os.path.split(file)
-        tablename=tail.split('.')[0]
-        tablevar = Table(tablename,metadata)
+        tablename = tail.split('.')[0]
+        tablevar = Table(tablename, metadata)
         print("Importing {}".format(file) + ' into ' + tablename)
 
-        with open(file,'r') as yamlstream:
-
-            count = 1
+        with open(file, 'r') as yamlstream:
 
             print("Processing of Yaml starting")
             trans = connection.begin()
 
             for record in yaml_stream.read_by_list(yamlstream):
-                connection.execute(tablevar.insert().values(record))
-                print("Imported record {0}".format(count))
-                count += 1
+                if record:
+                    try:
+                        connection.execute(tablevar.insert().values(record))
+                    except sqlalchemy.exc.IntegrityError as err:
+                        print("{} skipped {} ({})".format(tablename, record, err))
             trans.commit()

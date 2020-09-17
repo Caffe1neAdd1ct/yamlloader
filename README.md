@@ -20,11 +20,11 @@ or
 For PostgreSQL, you will also need to install `psycopg2`.
 
 ## Arch Linux
-
-    sudo pacman -S python-mysql-connector
-    sudo pacman -S python-yaml
     sudo pacman -S python-pip
-    sudo pip install flask_sqlalchemy
+    pip install --user pipenv
+    pipenv install
+    pipenv shell
+    python Load.py «database engine»
 
 # Operation
 

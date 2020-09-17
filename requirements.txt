@@ -1,3 +1,0 @@
-yaml
-SQLAlchemy
-PyYAML --global-option="--with-libyaml"
